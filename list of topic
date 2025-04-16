@@ -1,0 +1,6 @@
+Sensors to make graph(topic)
+dht-temp, dht-humid, co2, rain-sensor, soil-moisture-1, soil-moisture-2,
+water-level-sensor
+
+Actuators and controlling device(topic)
+fan-1, fan-2, fan-3, fan-4, fan-5, ac-1, ac-2, humidifier-1, humidifier-2, humidifier-3, light-1, light-2, light-3, light-4, light-5, water-pump
