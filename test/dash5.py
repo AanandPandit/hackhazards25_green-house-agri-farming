@@ -2,23 +2,21 @@ from flask import Flask, render_template_string, request, jsonify
 import subprocess
 from threading import Thread, Lock
 import time
-from datetime import datetime
+from datetime import datetime, timezone
+import pytz
+
+local_tz = pytz.timezone("Asia/Kolkata")  # change to your system's timezone
 
 app = Flask(__name__)
 lock = Lock()
 
-# only keep last 20 points
 LAST_N = 20
-
-# sensor storage
 timestamps = []
 sensor_data = {topic: [] for topic in [
     "dht-temp", "dht-humid", "co2", "rain-sensor",
     "soil-moisture-1", "soil-moisture-2", "water-level-sensor"
 ]}
-# track last cloud‑sent time for each topic (HH:MM:SS)
 sensor_timestamps = {topic: None for topic in sensor_data}
-# track epoch ms of last data arrival (for online/offline)
 last_data_epoch = [time.time() * 1000]
 
 device_states = {}
@@ -211,17 +209,17 @@ def generate_insights(vals):
         try:
             x = float(v)
             if k == "dht-temp":
-                ins[k] = "Normal temperature" if 18<=x<=25 else ("⚠️ High temperature" if x>25 else "⚠️ Low temperature")
+                ins[k] = "Normal temperature" if 18 <= x <= 25 else ("⚠️ High temperature" if x > 25 else "⚠️ Low temperature")
             elif k == "dht-humid":
-                ins[k] = "Normal humidity" if 50<=x<=70 else ("⚠️ High humidity" if x>70 else "⚠️ Low humidity")
+                ins[k] = "Normal humidity" if 50 <= x <= 70 else ("⚠️ High humidity" if x > 70 else "⚠️ Low humidity")
             elif k == "co2":
-                ins[k] = "Safe" if x<=1000 else "⚠️ High CO2"
+                ins[k] = "Safe" if x <= 1000 else "⚠️ High CO2"
             elif "soil-moisture" in k:
-                ins[k] = "Good moisture" if 30<=x<=70 else ("⚠️ Soil too wet" if x>70 else "⚠️ Soil too dry")
+                ins[k] = "Good moisture" if 30 <= x <= 70 else ("⚠️ Soil too wet" if x > 70 else "⚠️ Soil too dry")
             elif k == "rain-sensor":
-                ins[k] = "🌧️ Rain detected" if x>0 else "Clear"
+                ins[k] = "🌧️ Rain detected" if x > 0 else "Clear"
             elif k == "water-level-sensor":
-                ins[k] = "Low water level" if x<20 else "Sufficient water"
+                ins[k] = "Low water level" if x < 20 else "Sufficient water"
             else:
                 ins[k] = "OK"
         except:
@@ -230,7 +228,6 @@ def generate_insights(vals):
 
 @app.route("/")
 def dashboard():
-    cvs = {k: (sensor_data[k][-1] if sensor_data[k] else "--") for k in sensor_data}
     return render_template_string(
         HTML,
         sensor_topics=list(sensor_data.keys()),
@@ -262,57 +259,61 @@ def device_status():
 @app.route("/device", methods=["POST"])
 def device_control():
     data = request.json
-    topic = data.get("topic","")
-    state = data.get("state","")
+    topic = data.get("topic", "")
+    state = data.get("state", "")
     if topic in DEVICE_TOPICS:
         try:
-            subprocess.run(["fluvio","produce",topic], input=state+"\n", text=True)
+            subprocess.run(["fluvio", "produce", topic], input=state + "\n", text=True)
             print(f"⚙️ Command sent → {topic}: {state.upper()}")
             return jsonify(status="ok")
         except Exception as e:
             print(f"❌ Error sending to {topic}: {e}")
-            return jsonify(status="error",message=str(e)),500
-    return jsonify(status="error",message="Invalid topic"),400
+            return jsonify(status="error", message=str(e)), 500
+    return jsonify(status="error", message="Invalid topic"), 400
 
 def consume_numeric(topic):
     proc = subprocess.Popen(
-        ["fluvio","consume",topic,"-B"],
+        ["fluvio", "consume", topic, "-T20", "--format={{time}},{{value}}"],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
     )
     print(f"✅ Subscribed to '{topic}'")
     while True:
         line = proc.stdout.readline()
         if line:
-            parts = line.strip().split("=>")
-            if len(parts)>=2:
-                ts_raw = parts[0].strip()
-                # get only HH:MM:SS
-                ts = ts_raw.split()[-1]
-                val_str = parts[-1].strip()
-            else:
-                ts = datetime.now().strftime("%H:%M:%S")
-                val_str = line.strip()
             try:
+                ts_full, val_str = line.strip().split(",", 1)
+
+                # Convert UTC → local
+                try:
+                    dt_utc = datetime.strptime(ts_full, "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=timezone.utc)
+                except ValueError:
+                    dt_utc = datetime.strptime(ts_full, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+
+                dt_local = dt_utc.astimezone(local_tz)
+                ts = dt_local.strftime("%H:%M:%S")
+
                 val = float(val_str)
                 with lock:
                     sensor_data[topic].append(val)
-                    if len(sensor_data[topic])>LAST_N:
+                    if len(sensor_data[topic]) > LAST_N:
                         sensor_data[topic].pop(0)
                     sensor_timestamps[topic] = ts
-                    last_data_epoch[0] = time.time()*1000
-                    if topic=="dht-temp":
+                    last_data_epoch[0] = time.time() * 1000
+                    if topic == "dht-temp":
                         timestamps.append(ts)
-                        if len(timestamps)>LAST_N:
+                        if len(timestamps) > LAST_N:
                             timestamps.pop(0)
-                print(f"📥 {topic} @ {ts}: {val}")
-            except ValueError:
-                print(f"⚠️ Invalid from {topic}: {line.strip()}")
+                print(f"📥 {topic}: {val} @ {ts}")
+            except Exception as e:
+                print(f"⚠️ Parse error for {topic}: {line.strip()}")
         else:
-            time.sleep(0.1)  # small sleep in thread only
+            time.sleep(0.1)
+
+
 
 def consume_state(topic):
     proc = subprocess.Popen(
-        ["fluvio","consume",topic,"-B"],
+        ["fluvio", "consume", topic, "-B"],
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
     )
     print(f"✅ Listening to '{topic}' for device status")
@@ -320,7 +321,7 @@ def consume_state(topic):
         line = proc.stdout.readline()
         if line:
             st = line.strip().upper()
-            if st in ["ON","OFF"]:
+            if st in ["ON", "OFF"]:
                 device_states[topic] = st
                 print(f"🔄 {topic} status → {st}")
         else:
