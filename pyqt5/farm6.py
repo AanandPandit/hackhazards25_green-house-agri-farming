@@ -7,7 +7,8 @@ from threading import Thread
 from datetime import datetime
 from fluvio import Fluvio
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QGridLayout, QFrame, QTextEdit
+    QApplication, QWidget, QLabel, QVBoxLayout, QHBoxLayout, QGridLayout,
+    QFrame, QTextEdit
 )
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPixmap, QMovie, QColor
@@ -74,7 +75,7 @@ class GreenhouseSimulator(QWidget):
         title = QLabel("<h1>🌱 Greenhouse Monitoring</h1>")
         profile = os.popen("fluvio profile current").read().strip()
         connection = QLabel(f"🟢 Connected to Fluvio | Profile: {profile} | Time: {datetime.now().strftime('%H:%M:%S')}")
-        connection.setStyleSheet("color: green;")
+        connection.setStyleSheet("color: green; font-weight: bold;")
         header.addWidget(title)
         header.addWidget(connection)
         self.layout.addLayout(header)
@@ -82,38 +83,51 @@ class GreenhouseSimulator(QWidget):
     def setup_sensors(self):
         grid = QGridLayout()
         for i, (topic, (name, _, icon)) in enumerate(SENSOR_TOPICS.items()):
-            hbox = QHBoxLayout()
+            sensor_box = QHBoxLayout()
             if icon:
                 pixmap = QPixmap(f"{ASSETS_SENSORS}/{icon}").scaled(50, 50, Qt.KeepAspectRatio)
-                hbox.addWidget(QLabel(pixmap=pixmap))
+                sensor_box.addWidget(QLabel(pixmap=pixmap))
             label = QLabel(f"{name}: 0")
-            hbox.addWidget(label)
-            grid.addLayout(hbox, i, 0)
+            label.setStyleSheet("font-size: 14px; color: #333333; font-weight: bold;")
+            sensor_box.addWidget(label)
+            row = i // 2
+            col = i % 2
+            grid.addLayout(sensor_box, row, col)
             self.sensor_labels[topic] = label
         self.layout.addLayout(grid)
 
     def setup_devices(self):
         rows = [[], [], [], [], []]  # fans, lights, ac+humidifiers, water level + pump
         for topic, (name, dtype) in DEVICE_TOPICS.items():
+            container = QVBoxLayout()
             label = QLabel()
+            label.setFixedSize(60, 60)
             gif_file = f"{ASSETS_DEVICES}/{dtype}-on.gif"
             static_file = f"{ASSETS_DEVICES}/{dtype}-off.png"
-            label.setPixmap(QPixmap(static_file).scaled(60, 60))
-            label.setToolTip(f"{name}: UNKNOWN")
-            self.device_labels[topic] = (label, gif_file, static_file)
+            label.setPixmap(QPixmap(static_file).scaled(60, 60, Qt.KeepAspectRatio))
+            name_label = QLabel(name)
+            name_label.setAlignment(Qt.AlignCenter)
+            status_label = QLabel("UNKNOWN")
+            status_label.setAlignment(Qt.AlignCenter)
+            status_label.setStyleSheet("color: gray; font-weight: bold;")
+            container.addWidget(label)
+            container.addWidget(name_label)
+            container.addWidget(status_label)
+            self.device_labels[topic] = (label, gif_file, static_file, status_label)
+
             if "fan" in topic:
-                rows[0].append(label)
+                rows[0].append(container)
             elif "light" in topic:
-                rows[1].append(label)
+                rows[1].append(container)
             elif "ac" in topic or "humidifier" in topic:
-                rows[2].append(label)
+                rows[2].append(container)
             elif "water-pump" in topic:
-                rows[4].append(label)
+                rows[4].append(container)
 
         for row in rows:
             hbox = QHBoxLayout()
-            for lbl in row:
-                hbox.addWidget(lbl)
+            for widget in row:
+                hbox.addLayout(widget)
             self.layout.addLayout(hbox)
 
     def setup_terminal_output(self):
@@ -121,6 +135,7 @@ class GreenhouseSimulator(QWidget):
         self.terminal.setFixedHeight(120)
         self.terminal.setStyleSheet("background-color: #f0f0f0; font-family: monospace; font-size: 10pt;")
         self.terminal.setReadOnly(True)
+        self.layout.addWidget(QLabel("🖥️ Terminal Output:"))
         self.layout.addWidget(self.terminal)
 
     def add_separator(self):
@@ -134,17 +149,24 @@ class GreenhouseSimulator(QWidget):
             value = simulator()
             self.producers[topic].send_string(str(value))
             self.sensor_labels[topic].setText(f"{name}: {value}")
-        for topic, (label, gif_file, static_file) in self.device_labels.items():
+
+        for topic, (label, gif_file, static_file, status_label) in self.device_labels.items():
             state = device_states[topic]
             if state == "ON":
                 movie = QMovie(gif_file)
                 movie.setScaledSize(label.size())
                 label.setMovie(movie)
                 movie.start()
-                label.setToolTip(f"{DEVICE_TOPICS[topic][0]}: ON")
+                status_label.setText("ON")
+                status_label.setStyleSheet("color: green; font-weight: bold;")
+            elif state == "OFF":
+                label.setPixmap(QPixmap(static_file).scaled(60, 60, Qt.KeepAspectRatio))
+                status_label.setText("OFF")
+                status_label.setStyleSheet("color: red; font-weight: bold;")
             else:
-                label.setPixmap(QPixmap(static_file).scaled(60, 60))
-                label.setToolTip(f"{DEVICE_TOPICS[topic][0]}: OFF")
+                label.setPixmap(QPixmap(static_file).scaled(60, 60, Qt.KeepAspectRatio))
+                status_label.setText("UNKNOWN")
+                status_label.setStyleSheet("color: gray; font-weight: bold;")
 
     def listen_control(self, topic):
         def consume():
@@ -152,23 +174,23 @@ class GreenhouseSimulator(QWidget):
                 ["fluvio", "consume", topic, "-T20"],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
             )
-            msg = f"📡 Listening for commands on topic '{topic}'..."
-            print(msg)
-            self.terminal.append(msg)
+            self.log_terminal(f"📡 Listening for commands on topic '{topic}'...")
             while True:
                 line = process.stdout.readline()
                 if line:
                     command = line.strip().lower()
                     if command in ["on", "off"]:
                         device_states[topic] = command.upper()
-                        self.terminal.append(f"✅ {DEVICE_TOPICS[topic][0]} set to {command.upper()}")
+                        self.log_terminal(f"✅ {DEVICE_TOPICS[topic][0]} set to {command.upper()}")
                     else:
-                        warn = f"⚠️ Unknown command '{command}' on topic {topic}"
-                        print(warn)
-                        self.terminal.append(warn)
+                        self.log_terminal(f"⚠️ Unknown command '{command}' on topic {topic}")
                 else:
                     time.sleep(1)
         Thread(target=consume, daemon=True).start()
+
+    def log_terminal(self, msg):
+        self.terminal.append(msg)
+        self.terminal.verticalScrollBar().setValue(self.terminal.verticalScrollBar().maximum())
 
 
 def check_required_topics():
