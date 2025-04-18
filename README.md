@@ -2,12 +2,13 @@
 
 # 🚀 Project Title
 
-> GreenHouse Agri-Farming
+> GreenHouse Agri-Farming Monitoring
 
 ---
 
 ## 📌 Problem Statement
 
+**Problem Statement 3 – Real-Time Data Experiences with Fluvio*
 Select the problem statement number and title from the official list given in Participant Manual.
 
 **Example:**  
@@ -52,7 +53,7 @@ Briefly describe the real-world use case and the value it provides.
 ### Sponsor Technologies Used (if any):
 - [ ] **Groq:** _How you used Groq_  
 - [ ] **Monad:** _Your blockchain implementation_  
-- [ ] **Fluvio:** _Real-time data handling_  
+- [✅] **Fluvio:** _Real-time data handling_  
 - [ ] **Base:** _AgentKit / OnchainKit / Smart Wallet usage_  
 - [ ] **Screenpipe:** _Screen-based analytics or workflows_  
 - [ ] **Stellar:** _Payments, identity, or token usage_
