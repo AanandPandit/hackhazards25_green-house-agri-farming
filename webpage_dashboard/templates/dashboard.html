@@ -1,0 +1,322 @@
+<!doctype html>
+<html>
+<head>
+  <title>🌿 Smart Greenhouse Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #f2f6ff;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      z-index: 1000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .logo-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo img {
+      height: 32px;
+    }
+    nav a {
+      margin-left: 20px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .status-info {
+      font-size: 0.9em;
+      margin-top: 5px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    .status-online {
+      color: #00ff99;
+      font-weight: bold;
+    }
+    .status-offline {
+      color: #ff4d4d;
+      font-weight: bold;
+    }
+    main {
+      padding: 120px 20px 20px;
+    }
+    h2, h3 {
+      color: #2c3e50;
+    }
+    .condition-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .condition-table th, .condition-table td {
+      padding: 10px;
+      text-align: left;
+    }
+    .condition-table th {
+      background: #e6f2ff;
+    }
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .chart-box {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .chart-box h4 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chart-box img {
+      height: 24px;
+    }
+    .device-control {
+      margin-top: 40px;
+    }
+    .device-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .device-card {
+      background: #fff;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .device-card img {
+      height: 24px;
+      margin-right: 10px;
+    }
+    .toggle {
+      position: relative;
+      width: 50px;
+      height: 24px;
+    }
+    .toggle input {
+      display: none;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    /* Anchor fix */
+    section[id] {
+      scroll-margin-top: 120px;
+      position: relative;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background: #4CAF50;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .about {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo-nav">
+      <div class="logo">
+        <img src="/assets/logo.png" alt="Logo">
+        <strong>Smart Greenhouse</strong>
+      </div>
+      <nav>
+        <a href="#condition">Condition</a>
+        <a href="#monitoring">Monitoring</a>
+        <a href="#devices">Devices</a>
+        <a href="#about">About</a>
+      </nav>
+    </div>
+    <div class="status-info">
+      🔌 Greenhouse: <span id="status-text" class="status-online">Online</span>
+      📅 Last Cloud Time: <span id="last-update">--</span>
+      🕒 System Time: <span id="sys-datetime">--</span>
+    </div>
+  </header>
+
+  <main>
+    <section id="condition">
+      <h2>📋 Greenhouse Condition</h2>
+      <table class="condition-table" id="conditions-table">
+        <thead><tr><th>Sensor</th><th>Value</th><th>Insight</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section id="monitoring">
+      <h2>📈 Graph Monitoring</h2>
+      <div class="charts-grid">
+        {% for t in sensor_topics %}
+        <div class="chart-box">
+          <h4>
+            <img src="/assets/sensors/{{ t }}.png" onerror="this.style.display='none'">
+            {{ t.replace('-', ' ').title() }} (<span id="{{t}}-value">--</span>)
+          </h4>
+          <canvas id="{{t}}-chart" height="150"></canvas>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="devices" class="device-control">
+      <h2>🛠 Device Control</h2>
+      <div class="device-grid">
+        {% for t in device_topics %}
+        <div class="device-card">
+          <div>
+            <img src="/assets/devices/{{ t }}-off.png" onerror="this.style.display='none'" id="img-{{t}}">
+            {{ t.replace('-', ' ').title() }}
+          </div>
+          <label class="toggle">
+            <input type="checkbox" onchange="toggleDevice(this,'{{t}}')" id="switch-{{t}}">
+            <span class="slider"></span>
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section id="about" class="about">
+      <h2>ℹ️ About</h2>
+      <p>Information about the greenhouse system goes here. You can edit this section in the HTML.</p>
+    </section>
+  </main>
+
+  <script>
+    let charts = {};
+    const colorList = ['#ff6384','#36a2eb','#cc65fe','#ffce56','#4bc0c0','#9966ff'];
+
+    function createChart(id, label, index) {
+      const ctx = document.getElementById(id).getContext('2d');
+      return new Chart(ctx, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label, data: [], borderColor: colorList[index % colorList.length], tension: 0.3 }] },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false } },
+          scales: { x: { ticks: { maxTicksLimit: 4 } } }
+        }
+      });
+    }
+
+    async function fetchData() {
+      const res = await fetch('/data');
+      const js = await res.json();
+      const now = Date.now();
+      const online = (now - js.last_update_epoch < 10000);
+
+      document.getElementById('status-text').textContent = online ? 'Online' : 'Offline';
+      document.getElementById('status-text').className = online ? 'status-online' : 'status-offline';
+      document.getElementById('last-update').textContent = js.last_timestamp_display || '--';
+
+      for (let t of Object.keys(js.sensors)) {
+        const ch = charts[t];
+        ch.data.labels = js.timestamps;
+        ch.data.datasets[0].data = js.sensors[t];
+        ch.update();
+        document.getElementById(t + '-value').textContent = js.sensors[t].slice(-1)[0] ?? '--';
+      }
+
+      document.querySelectorAll('.toggle input').forEach(i => i.disabled = !online);
+    }
+
+    async function fetchStates() {
+      const res = await fetch('/device-status');
+      const ds = await res.json();
+      for (let [t, s] of Object.entries(ds)) {
+        const cb = document.getElementById('switch-' + t);
+        const img = document.getElementById('img-' + t);
+        if (cb) cb.checked = (s === 'ON');
+        if (img) img.src = `/assets/devices/${t}-${cb.checked ? 'on' : 'off'}.${cb.checked ? 'gif' : 'png'}`;
+      }
+    }
+
+    async function fetchInsights() {
+      const res = await fetch('/insights');
+      const js = await res.json();
+      const tbody = document.querySelector('#conditions-table tbody');
+      tbody.innerHTML = '';
+      for (let t of Object.keys(js.current_values)) {
+        const tr = document.createElement('tr');
+        const value = js.current_values[t];
+        const insight = js.insights[t];
+        const emoji = insight.includes('Low') ? '⚠️' : insight.includes('High') ? '🔥' : '✅';
+        tr.innerHTML = `<td>${t.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</td><td>${value}</td><td>${emoji} ${insight}</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function toggleDevice(el, topic) {
+      fetch('/device', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic, state: el.checked ? 'on' : 'off' })
+      });
+    }
+
+    function updateSystemTime() {
+      document.getElementById('sys-datetime').textContent = new Date().toLocaleString();
+    }
+
+    window.onload = () => {
+      const topics = {{ sensor_topics | tojson }};
+      topics.forEach((t, i) => charts[t] = createChart(`${t}-chart`, t, i));
+      fetchData(); fetchStates(); fetchInsights(); updateSystemTime();
+      setInterval(fetchData, 5000);
+      setInterval(fetchStates, 5000);
+      setInterval(fetchInsights, 10000);
+      setInterval(updateSystemTime, 1000);
+    }
+  </script>
+</body>
+</html>
