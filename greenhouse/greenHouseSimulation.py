@@ -13,11 +13,11 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QObject
 from PyQt5.QtGui import QPixmap, QMovie
 
-ASSETS_DEVICES = "pyqt5/assets/devices"
-ASSETS_SENSORS = "pyqt5/assets/sensors"
+ASSETS_DEVICES = "greenhouse/assets/devices"
+ASSETS_SENSORS = "greenhouse/assets/sensors"
 
 SENSOR_TOPICS = {
-    "dht-temp": ("    Temperature", lambda: round(random.uniform(18, 30), 2), "dht-temp.png", "°C"),
+    "dht-temp": ("    Temperature", lambda: round(random.uniform(18, 30), 2), "dht-temp.png",),
     "dht-humid": ("    Humidity", lambda: round(random.uniform(50, 90), 2), "dht-humid.png"),
     "co2": ("    CO2", lambda: round(random.uniform(300, 800), 2), "co2.png"),
     "rain-sensor": ("    Rain Sensor", lambda: round(random.uniform(0, 100), 2), "rain-sensor.png"),

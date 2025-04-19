@@ -13,8 +13,8 @@ from PyQt5.QtWidgets import (
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QObject
 from PyQt5.QtGui import QPixmap, QMovie
 
-ASSETS_DEVICES = "pyqt5/assets/devices"
-ASSETS_SENSORS = "pyqt5/assets/sensors"
+ASSETS_DEVICES = "greenhouse/assets/devices"
+ASSETS_SENSORS = "greenhouse/assets/sensors"
 
 SENSOR_TOPICS = {
     "dht-temp": ("    Temperature", lambda: round(random.uniform(18, 30), 2), "dht-temp.png", "°C"),
