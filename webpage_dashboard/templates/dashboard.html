@@ -215,14 +215,14 @@
     </div>
     <div class="status-info">
       Greenhouse: <span id="status-text" class="status-online">Online</span>
-      Last Cloud Time: <span id="last-update">--</span>
-      System Time: <span id="sys-datetime">--</span>
+      Last Cloud Time: <span id="last-update" style="color: #2c3e50; font-weight: bold;">--</span>
+      System Time: <span id="sys-datetime" style="color: #2c3e50; font-weight: bold;">--</span>
     </div>
   </header>
 
   <main>
     <section id="condition">
-      <h2>📋 Greenhouse Condition</h2>
+      <h2 style="background-color: #4CAF50; padding: 10px;">📋 Greenhouse Condition</h2>
       <table class="condition-table" id="conditions-table">
         <thead>
           <tr>
@@ -236,15 +236,16 @@
     </section>
 
     <section id="monitoring">
-      <h2>📈 Graph Monitoring</h2>
+      <h2 style="background-color: #4CAF50; padding: 10px;">📈 Graph Monitoring</h2>
       <div class="charts-grid">
         {% for t in sensor_topics %}
         <div class="chart-box">
           <h4>
             <img src="/assets/sensors/{{ t }}.png" onerror="this.style.display='none'">
-            {{ t.replace('-', ' ').title() }} : <span id="{{t}}-value">--</span>
+            {{ t.replace('-', ' ').title() }} : <span id="{{t}}-value" style="color: green;">--</span>
             {% if 'temp' in t.lower() %}°C
             {% elif 'humid' in t.lower() %}%
+            {% elif 'rain' in t.lower() %}%
             {% elif 'co2' in t.lower() %}ppm
             {% elif 'moisture' in t.lower() %}%
             {% elif 'light' in t.lower() %}%
@@ -258,7 +259,7 @@
     </section>
 
     <section id="devices" class="device-control">
-      <h2>🛠 Device Control</h2>
+      <h2 style="background-color: #4CAF50; padding: 10px;">🛠 Device Control</h2>
       <div class="device-grid">
         {% for t in device_topics %}
         <div class="device-card">
@@ -276,9 +277,32 @@
     </section>
 
     <section id="about" class="about">
-      <h2>ℹ️ About</h2>
-      <p>Information about the greenhouse system goes here. You can edit this section in the HTML.</p>
-      
+      <h2 style="background-color: #4CAF50; color: white; padding: 10px; border-radius: 5px;">ℹ️ About</h2>
+      <div style="margin-top: 15px; line-height: 1.6;">
+        <h3 style="color: #4CAF50;">🌿 Smart Greenhouse Monitoring System</h3>
+        <p>
+          This project is an IoT-based solution designed to automate and monitor greenhouse conditions in real-time using <b>Fluvio Cloud</b>. 
+          It tracks parameters like temperature, humidity, CO₂, soil moisture, rain, irrigation to optimize plant growth.<br>This also provides
+          controls for devices installed in greenhouse like lights, AC, fans, humidifier, water pump.
+        </p>
+        
+        <h3 style="color: #4CAF50;">🛠️ Developed By</h3>
+        <p>
+          Aanand Pandit  
+          <br>
+          <a href="https://github.com/AanandPandit" target="_blank" style="color: #2c3e50; text-decoration: none;">
+            <strong>Github</strong>
+          </a>
+        </p>
+        
+        <h3 style="color: #4CAF50;">🚀 Hackathon Project</h3>
+        <p>
+          Built for <strong>HackHazards'25</strong>, a hackathon organized by  
+          <a href="https://hackhazards.namespacecomm.in/" target="_blank" style="color: #2c3e50; text-decoration: none;">
+            <strong>The NameSpace Community</strong>
+          </a>
+        </p>
+      </div>
     </section>
   </main>
 
