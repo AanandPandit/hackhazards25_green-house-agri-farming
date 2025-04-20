@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
   <title>🌿 Smart Greenhouse Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -10,38 +11,47 @@
       margin: 0;
       background: #f2f6ff;
     }
+
     header {
       position: fixed;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       background: #4CAF50;
       color: white;
       padding: 10px 20px;
       z-index: 1000;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
+
     .logo-nav {
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
     }
+
     .logo {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .logo img {
-      height: 32px;
+      height: 40px;
     }
+
     nav a {
       margin-left: 20px;
       color: white;
       text-decoration: none;
       font-weight: bold;
     }
+
     nav a:hover {
       text-decoration: underline;
     }
+
     .status-info {
       font-size: 0.9em;
       margin-top: 5px;
@@ -49,90 +59,112 @@
       gap: 15px;
       flex-wrap: wrap;
     }
+
     .status-online {
       color: #00ff99;
       font-weight: bold;
     }
+
     .status-offline {
       color: #ff4d4d;
       font-weight: bold;
     }
+
     main {
       padding: 120px 20px 20px;
     }
-    h2, h3 {
+
+    h2,
+    h3 {
       color: #2c3e50;
     }
+
     .condition-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
     }
-    .condition-table th, .condition-table td {
+
+    .condition-table th,
+    .condition-table td {
       padding: 10px;
       text-align: left;
     }
+
     .condition-table th {
       background: #e6f2ff;
     }
+
     .charts-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 20px;
     }
+
     .chart-box {
       background: #fff;
       padding: 15px;
       border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
+
     .chart-box h4 {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .chart-box img {
       height: 24px;
     }
+
     .device-control {
       margin-top: 40px;
     }
+
     .device-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 15px;
     }
+
     .device-card {
       background: #fff;
       padding: 10px 15px;
       border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+
     .device-card img {
       height: 24px;
       margin-right: 10px;
     }
+
     .toggle {
       position: relative;
       width: 50px;
       height: 24px;
     }
+
     .toggle input {
       display: none;
     }
+
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: #ccc;
       transition: .4s;
       border-radius: 34px;
     }
 
-    /* Anchor fix */
     section[id] {
       scroll-margin-top: 100px;
       position: relative;
@@ -149,12 +181,15 @@
       transition: .4s;
       border-radius: 50%;
     }
-    input:checked + .slider {
+
+    input:checked+.slider {
       background: #4CAF50;
     }
-    input:checked + .slider:before {
+
+    input:checked+.slider:before {
       transform: translateX(26px);
     }
+
     .about {
       background: white;
       padding: 15px;
@@ -163,11 +198,12 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <div class="logo-nav">
       <div class="logo">
-        <img src="/assets/logo.png" alt="Logo">
+        <img src="/assets/misc/logo.png" alt="Logo">
         <strong>Smart Greenhouse</strong>
       </div>
       <nav>
@@ -178,9 +214,9 @@
       </nav>
     </div>
     <div class="status-info">
-      🔌 Greenhouse: <span id="status-text" class="status-online">Online</span>
-      📅 Last Cloud Time: <span id="last-update">--</span>
-      🕒 System Time: <span id="sys-datetime">--</span>
+      Greenhouse: <span id="status-text" class="status-online">Online</span>
+      Last Cloud Time: <span id="last-update">--</span>
+      System Time: <span id="sys-datetime">--</span>
     </div>
   </header>
 
@@ -188,7 +224,13 @@
     <section id="condition">
       <h2>📋 Greenhouse Condition</h2>
       <table class="condition-table" id="conditions-table">
-        <thead><tr><th>Sensor</th><th>Value</th><th>Insight</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Sensor</th>
+            <th>Value</th>
+            <th>Insight</th>
+          </tr>
+        </thead>
         <tbody></tbody>
       </table>
     </section>
@@ -200,7 +242,14 @@
         <div class="chart-box">
           <h4>
             <img src="/assets/sensors/{{ t }}.png" onerror="this.style.display='none'">
-            {{ t.replace('-', ' ').title() }} (<span id="{{t}}-value">--</span>)
+            {{ t.replace('-', ' ').title() }} : <span id="{{t}}-value">--</span>
+            {% if 'temp' in t.lower() %}°C
+            {% elif 'humid' in t.lower() %}%
+            {% elif 'co2' in t.lower() %}ppm
+            {% elif 'moisture' in t.lower() %}%
+            {% elif 'light' in t.lower() %}%
+            {% elif 'distance' in t.lower() or 'level' in t.lower() %}%
+            {% endif %}
           </h4>
           <canvas id="{{t}}-chart" height="150"></canvas>
         </div>
@@ -229,12 +278,13 @@
     <section id="about" class="about">
       <h2>ℹ️ About</h2>
       <p>Information about the greenhouse system goes here. You can edit this section in the HTML.</p>
+      
     </section>
   </main>
 
   <script>
     let charts = {};
-    const colorList = ['#ff6384','#36a2eb','#cc65fe','#ffce56','#4bc0c0','#9966ff'];
+    const colorList = ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#4bc0c0', '#9966ff'];
 
     function createChart(id, label, index) {
       const ctx = document.getElementById(id).getContext('2d');
@@ -291,7 +341,7 @@
         const value = js.current_values[t];
         const insight = js.insights[t];
         const emoji = insight.includes('Low') ? '⚠️' : insight.includes('High') ? '🔥' : '✅';
-        tr.innerHTML = `<td>${t.replace(/-/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</td><td>${value}</td><td>${emoji} ${insight}</td>`;
+        tr.innerHTML = `<td>${t.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</td><td>${value}</td><td>${emoji} ${insight}</td>`;
         tbody.appendChild(tr);
       }
     }
@@ -309,14 +359,16 @@
     }
 
     window.onload = () => {
-      const topics = {{ sensor_topics | tojson }};
-      topics.forEach((t, i) => charts[t] = createChart(`${t}-chart`, t, i));
-      fetchData(); fetchStates(); fetchInsights(); updateSystemTime();
-      setInterval(fetchData, 5000);
-      setInterval(fetchStates, 5000);
-      setInterval(fetchInsights, 10000);
-      setInterval(updateSystemTime, 1000);
+      const topics = {{ sensor_topics | tojson
+    }};
+    topics.forEach((t, i) => charts[t] = createChart(`${t}-chart`, t, i));
+    fetchData(); fetchStates(); fetchInsights(); updateSystemTime();
+    setInterval(fetchData, 5000);
+    setInterval(fetchStates, 5000);
+    setInterval(fetchInsights, 10000);
+    setInterval(updateSystemTime, 1000);
     }
   </script>
 </body>
+
 </html>

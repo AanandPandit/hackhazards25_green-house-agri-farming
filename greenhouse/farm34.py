@@ -23,7 +23,7 @@ SENSOR_TOPICS = {
     "rain-sensor": ("    Rain Sensor", lambda: round(random.uniform(0, 100), 2), "rain-sensor.png", "%"),
     "soil-moisture-1": ("    Soil Moisture 1", lambda: round(random.uniform(10, 70), 2), "soil-moisture.png", "%"),
     "soil-moisture-2": ("    Soil Moisture 2", lambda: round(random.uniform(10, 70), 2), "soil-moisture.png", "%"),
-    "water-level-sensor": ("    Water Tank", lambda: round(random.uniform(0, 100), 2), None, "cm"),
+    "water-level-sensor": ("    Water Tank", lambda: round(random.uniform(0, 100), 2), None, "%"),
 }
 
 DEVICE_TOPICS = {
@@ -272,7 +272,7 @@ class GreenhouseSimulator(QWidget):
                 self.water_value_label.setText(f"{value} {unit}")
             else:
                 self.sensor_labels[topic].setText(f"{name}: {value} {unit}")
-            self.log_terminal(f"📤 Sent:: {name.strip()} --> {value} {unit} --> {topic}")
+            self.log_terminal(f"📤 Sent:: {name.strip()}          -->         {value} {unit}         -->         {topic}")
 
         for topic, (label, gif_file, static_file, status_label) in self.device_labels.items():
             state = device_states[topic]
