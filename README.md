@@ -8,132 +8,107 @@
 
 ## 📌 Problem Statement
 
-**Problem Statement 3 – Real-Time Data Experiences with Fluvio*
-Select the problem statement number and title from the official list given in Participant Manual.
-
-**Example:**  
-**Problem Statement 7 – Transform the Future of Rural Commerce**
+**Problem Statement 3 – Real-Time Data Experiences with Fluvio**
 
 ---
 
 ## 🎯 Objective
 
-What problem does your project solve, and who does it serve?  
-Briefly describe the real-world use case and the value it provides.
+Modern agriculture faces challenges in maintaining optimal environmental conditions for crops, especially in controlled environments like greenhouses. This project solves that problem by simulating a smart greenhouse that:
+
+- Monitors real-time sensor data like temperature, humidity, CO2, and more.
+- Controls key devices such as fans, lights, humidifiers, and water pumps.
+- Provides a visually rich dashboard for interaction.
+
+It enables farmers and greenhouse managers to remotely monitor and control their greenhouse, ensuring healthier plants and better yields.
 
 ---
 
 ## 🧠 Team & Approach
 
 ### Team Name:  
-`Your team name here`
+`SoloBloom`
 
-### Team Members:  
-- Name 1 (GitHub / LinkedIn / Role)  
-- Name 2  
-- Name 3  
-*(Add links if you want)*
+### Team Member:  
+- Aanand Pandit ([GitHub](https://github.com/aanandpandit) / Developer / Solo Performer)
 
-### Your Approach:  
-- Why you chose this problem  
-- Key challenges you addressed  
-- Any pivots, brainstorms, or breakthroughs during hacking  
+### My Approach:  
+- Chose this problem for its real-world impact in agriculture automation.
+- Built a simulation to model a greenhouse using PyQt5 and Flask.
+- Integrated Fluvio for real-time, low-latency communication between UI and backend.
+- Focused on simplicity, extensibility, and live visual feedback for a robust experience.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Core Technologies Used:
-- Frontend:
-- Backend:
-- Database:
-- APIs:
-- Hosting:
+- **Frontend:** HTML, JavaScript, Chart.js
+- **Backend:** Flask (Python)
+- **Database:** None (Fluvio handles streaming state)
+- **APIs:** Fluvio CLI & Python SDK
+- **Hosting:** Localhost (Flask & PyQt5)
 
-### Sponsor Technologies Used (if any):
-- [ ] **Groq:** _How you used Groq_  
-- [ ] **Monad:** _Your blockchain implementation_  
-- [✅] **Fluvio:** _Real-time data handling_  
-- [ ] **Base:** _AgentKit / OnchainKit / Smart Wallet usage_  
-- [ ] **Screenpipe:** _Screen-based analytics or workflows_  
-- [ ] **Stellar:** _Payments, identity, or token usage_
-*(Mark with ✅ if completed)*
+### Sponsor Technologies Used:
+- [ ] **Groq:**  
+- [ ] **Monad:**  
+- [✅] **Fluvio:** _Real-time stream processing and control messaging_
+- [ ] **Base:**  
+- [ ] **Screenpipe:**  
+- [ ] **Stellar:**  
+
 ---
 
 ## ✨ Key Features
 
-Highlight the most important features of your project:
-
-- ✅ Feature 1  
-- ✅ Feature 2  
-- ✅ Feature 3  
-- ✅ Feature 4  
-
-Add images, GIFs, or screenshots if helpful!
+- ✅ Real-time monitoring of environmental sensor data
+- ✅ Interactive simulator using PyQt5
+- ✅ Device control (Fan, AC, Lights, Humidifier, Pump)
+- ✅ Web dashboard with charts and insights
+- ✅ Fluvio-powered data streaming between simulation and control layer
 
 ---
 
 ## 📽️ Demo & Deliverables
 
 - **Demo Video Link:** [Paste YouTube or Loom link here]  
-- **Pitch Deck / PPT Link:** [Paste Google Slides / PDF link here]  
+- **Pitch Deck / PPT Link:** [Paste Google Slides or PDF link here]  
 
 ---
 
 ## ✅ Tasks & Bonus Checklist
 
-- [ ] **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form** (Details in Participant Manual)  
-- [ ] **All members of the team completed Bonus Task 1 - Sharing of Badges and filled the form (2 points)**  (Details in Participant Manual)
-- [ ] **All members of the team completed Bonus Task 2 - Signing up for Sprint.dev and filled the form (3 points)**  (Details in Participant Manual)
-
-*(Mark with ✅ if completed)*
+- [ ] **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form**  
+- [ ] **Completed Bonus Task 1 - Sharing of Badges and filled the form (2 points)**  
+- [ ] **Completed Bonus Task 2 - Signing up for Sprint.dev and filled the form (3 points)**  
 
 ---
 
 ## 🧪 How to Run the Project
 
 ### Requirements:
-- Node.js / Python / Docker / etc.
-- API Keys (if any)
-- .env file setup (if needed)
+- Python 3.7+
+- Fluvio CLI
+- PyQt5, Flask, pytz
 
 ### Local Setup:
 ```bash
 # Clone the repo
-git clone https://github.com/your-team/project-name
+git clone https://github.com/your-username/greenhouse-fluvio-hackathon
+
+# Go into project directory
+cd hackhazards25_green-house-agri-farming
 
 # Install dependencies
-cd project-name
-npm install
+pip install -r requirements.txt
 
-# Start development server
-npm run dev
-```
+# Start Fluvio cluster
+fluvio cluster start
 
-Provide any backend/frontend split or environment setup notes here.
+# Run simulator (in one terminal)
+cd greenhouse
+python3 greenHouseSimulation.py
 
----
-
-## 🧬 Future Scope
-
-List improvements, extensions, or follow-up features:
-
-- 📈 More integrations  
-- 🛡️ Security enhancements  
-- 🌐 Localization / broader accessibility  
-
----
-
-## 📎 Resources / Credits
-
-- APIs or datasets used  
-- Open source libraries or tools referenced  
-- Acknowledgements  
-
----
-
-## 🏁 Final Words
-
-Share your hackathon journey — challenges, learnings, fun moments, or shout-outs!
-
----
+# Run dashboard (in second terminal)
+cd webpage_dashboard
+python3 app.py
