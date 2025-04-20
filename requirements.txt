@@ -1,0 +1,4 @@
+fluvio
+PyQt5
+Flask
+pytz
