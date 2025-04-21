@@ -5,7 +5,7 @@
 Open the Terminal and follow the below instructions make sure that you are connected to internet:
 
 1. Clone the Repository:
-    git clone git@github.com:AanandPandit/hackhazards25_green-house-agri-farming
+    git clone https://github.com/AanandPandit/hackhazards25_green-house-agri-farming.git
     cd hackhazards25_green-house-agri-farming
 
 2. Install Fluvio Client:
