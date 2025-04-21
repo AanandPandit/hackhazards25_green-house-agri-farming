@@ -23,7 +23,8 @@ Open the Terminal and follow the below instructions make sure that you are conne
 4. Create and Setup the Cluster:
     fluvio cloud cluster create greenhouse-agri       # Create cluster
     fluvio profile list                               # Check available clusters
-    fluvio profile use greenhouse-agri                # Set cluster for use
+    fluvio profile switch greenhouse-agri             # Set cluster for use
+    fluvio profile                                    # Check the current cluster
 
 5. Create Fluvio Topics:
     fluvio topic create dht-temp

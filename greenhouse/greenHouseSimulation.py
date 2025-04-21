@@ -17,13 +17,13 @@ ASSETS_DEVICES = "greenhouse/assets/devices"
 ASSETS_SENSORS = "greenhouse/assets/sensors"
 
 SENSOR_TOPICS = {
-    "dht-temp": ("    Temperature", lambda: round(random.uniform(18, 30), 2), "dht-temp.png",),
-    "dht-humid": ("    Humidity", lambda: round(random.uniform(50, 90), 2), "dht-humid.png"),
-    "co2": ("    CO2", lambda: round(random.uniform(300, 800), 2), "co2.png"),
-    "rain-sensor": ("    Rain Sensor", lambda: round(random.uniform(0, 100), 2), "rain-sensor.png"),
-    "soil-moisture-1": ("    Soil Moisture 1", lambda: round(random.uniform(10, 70), 2), "soil-moisture.png"),
-    "soil-moisture-2": ("    Soil Moisture 2", lambda: round(random.uniform(10, 70), 2), "soil-moisture.png"),
-    "water-level-sensor": ("    Water Tank", lambda: round(random.uniform(0, 100), 2), None),
+    "dht-temp": ("    Temperature", lambda: round(random.uniform(18, 30), 2), "dht-temp.png", "°C"),
+    "dht-humid": ("    Humidity", lambda: round(random.uniform(50, 90), 2), "dht-humid.png", "%"),
+    "co2": ("    CO2", lambda: round(random.uniform(300, 800), 2), "co2.png", "ppm"),
+    "rain-sensor": ("    Rain Sensor", lambda: round(random.uniform(0, 100), 2), "rain-sensor.png", "%"),
+    "soil-moisture-1": ("    Soil Moisture 1", lambda: round(random.uniform(10, 70), 2), "soil-moisture.png", "%"),
+    "soil-moisture-2": ("    Soil Moisture 2", lambda: round(random.uniform(10, 70), 2), "soil-moisture.png", "%"),
+    "water-level-sensor": ("    Water Tank", lambda: round(random.uniform(0, 100), 2), None, "%"),
 }
 
 DEVICE_TOPICS = {
@@ -161,7 +161,7 @@ class GreenhouseSimulator(QWidget):
         grid = QGridLayout()
         grid.setVerticalSpacing(8)
         row, col = 0, 0
-        for topic, (name, _, icon) in SENSOR_TOPICS.items():
+        for topic, (name, _, icon, _) in SENSOR_TOPICS.items():
             if topic == "water-level-sensor":
                 continue
             sensor_box = QHBoxLayout()
@@ -264,15 +264,15 @@ class GreenhouseSimulator(QWidget):
     def update_sensors(self):
         if not self.connected:
             return
-        for topic, (name, simulator, _) in SENSOR_TOPICS.items():
+        for topic, (name, simulator, _, unit) in SENSOR_TOPICS.items():
             value = simulator()
             self.producers[topic].send_string(str(value))
             if topic == "water-level-sensor":
                 self.water_bar.setValue(int(value))
-                self.water_value_label.setText(str(value))
+                self.water_value_label.setText(f"{value} {unit}")
             else:
-                self.sensor_labels[topic].setText(f"{name}: {value}")
-            self.log_terminal(f"📤 Sent:: {name} --> {value} --> {topic}")
+                self.sensor_labels[topic].setText(f"{name}: {value} {unit}")
+            self.log_terminal(f"📤 Sent:: {name.strip()}          -->         {value} {unit}         -->         {topic}")
 
         for topic, (label, gif_file, static_file, status_label) in self.device_labels.items():
             state = device_states[topic]
