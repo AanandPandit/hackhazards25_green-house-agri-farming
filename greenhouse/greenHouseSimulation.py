@@ -295,7 +295,7 @@ class GreenhouseSimulator(QWidget):
 
     def listen_control(self, topic):
         def consume():
-            process = subprocess.Popen(["fluvio", "consume", topic, "-T20"], stdout=subprocess.PIPE, text=True)
+            process = subprocess.Popen(["fluvio", "consume", topic, "-T1"], stdout=subprocess.PIPE, text=True)
             while self.connected:
                 line = process.stdout.readline()
                 if line:

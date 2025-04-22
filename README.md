@@ -27,7 +27,7 @@ It enables farmers and greenhouse managers to remotely monitor and control their
 ## 🧠 Team & Approach
 
 ### Team Name:  
-`SoloBloom`
+`NA`
 
 ### Team Member:  
 - Aanand Pandit ([GitHub](https://github.com/aanandpandit) / Developer / Solo Performer)
@@ -93,22 +93,112 @@ It enables farmers and greenhouse managers to remotely monitor and control their
 
 ### Local Setup:
 ```bash
-# Clone the repo
-git clone https://github.com/your-username/greenhouse-fluvio-hackathon
+1. Clone the Repository:
+    ‘git clone https://github.com/AanandPandit/hackhazards25_green-house-agri-farming.git’
+    cd hackhazards25_green-house-agri-farming
 
-# Go into project directory
-cd hackhazards25_green-house-agri-farming
+2. Install Fluvio Client:
+    sudo curl -fsS https://hub.infinyon.cloud/install/install.sh | bash
 
-# Install dependencies
-pip install -r requirements.txt
+    (After installing run this command to add path to system environment:)
+    echo 'export PATH="${HOME}/.fvm/bin:${HOME}/.fluvio/bin:${PATH}"' >> ~/.zshrc
 
-# Start Fluvio cluster
-fluvio cluster start
+    (Reboot the system to take effect on changes of installation.)
+    sudo reboot 
 
-# Run simulator (in one terminal)
-cd greenhouse
-python3 greenHouseSimulation.py
+3. Login to InfinyOn Cloud:
+    fluvio cloud login
+    (Enter your InfinyOn Cloud email and password when prompted.)
 
-# Run dashboard (in second terminal)
-cd webpage_dashboard
-python3 app.py
+4. Create and Setup the Cluster:
+    # Create cluster
+    fluvio cloud cluster create greenhouse-agri
+       
+    # Check available clusters
+    fluvio profile list        
+     
+    # Set cluster for use                  
+    fluvio profile switch greenhouse-agri 
+
+    # Check the current cluster       
+    fluvio profile                                    
+
+5. Create Fluvio Topics:
+    fluvio topic create dht-temp
+    fluvio topic create dht-humid
+    fluvio topic create co2
+    fluvio topic create rain-sensor
+    fluvio topic create soil-moisture-1
+    fluvio topic create soil-moisture-2
+    fluvio topic create water-level-sensor
+    fluvio topic create fan-1
+    fluvio topic create fan-2
+    fluvio topic create fan-3
+    fluvio topic create fan-4
+    fluvio topic create fan-5
+    fluvio topic create ac-1
+    fluvio topic create ac-2
+    fluvio topic create humidifier-1
+    fluvio topic create humidifier-2
+    fluvio topic create humidifier-3
+    fluvio topic create light-1
+    fluvio topic create light-2
+    fluvio topic create light-3
+    fluvio topic create light-4
+    fluvio topic create light-5
+    fluvio topic create water-pump
+
+6. Install Python Dependencies:
+    sudo pip3 install -r requirements.txt --break-system-packages
+
+7. Run the Project:
+
+    Terminal 1: Start the Greenhouse Simulator:
+        cd greenhouse
+        python3 greenHouseSimulation.py
+
+    Terminal 2: Start the Dashboard:
+        cd webpage_dashboard
+        python3 app.py
+
+8. View the Dashboad:
+    Open Firefox or any browser
+    Got to http://localhost:5000
+
+(Interact with the dashboard and watch real-time changes in the simulator.)
+
+NOTE:
+More information at: 
+'https://github.com/AanandPandit/hackhazards25_green-house-agri-farming'
+```
+
+---
+
+## 🧬 Future Scope
+
+While currently a simulation, this system is designed for real-world integration with:
+- Hardware Integration – Connect real sensors and control devices via Raspberry Pi or Arduino.
+- IoT Edge Deployment – Run the simulator on edge devices and stream data using Fluvio.
+- Cloud & Alerts – Use cloud platforms for analytics, storage, and real-time alerts.
+- Mobile Access – Build a mobile-friendly UI or app for remote monitoring and control.
+- AI Automation – Train models for smart decisions like irrigation and climate control.
+
+---
+
+## 📎 Resources / Credits
+
+- https://www.flaticon.com/
+- PyQt5 GUI Library
+- InfinyOn Fluvio
+
+---
+
+## 🏁 Final Words
+
+HackHazards’25 was an amazing journey! I learned a lot about real-time data streaming using Fluvio, UI design, and IoT system simulation while building the Smart Greenhouse Dashboard.
+
+From syncing devices to handling offline modes, every challenge taught me something new. The best part? Watching everything work together in real time — sensors, controls, and the dashboard.
+
+Huge thanks to the organizers and the open-source community for the inspiration. This is just the beginning — the future of smart farming is here! 🌱
+
+---
