@@ -187,9 +187,12 @@ While currently a simulation, this system is designed for real-world integration
 
 ## 📎 Resources / Credits
 
+- https://youtu.be/ubT7Vlt_fJ4
 - https://www.flaticon.com/
 - PyQt5 GUI Library
 - InfinyOn Fluvio
+- https://github.com/AanandPandit/hackhazards25_green-house-agri-farming/blob/main/readme.txt
+- https://github.com/AanandPandit/hackhazards25_green-house-agri-farming/blob/main/Documentation/Greenhouse-agri-monitoring-presentation.pdf
 
 ---
 
