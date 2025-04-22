@@ -78,9 +78,9 @@ It enables farmers and greenhouse managers to remotely monitor and control their
 
 ## ✅ Tasks & Bonus Checklist
 
-- [ ] **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form**  
-- [ ] **Completed Bonus Task 1 - Sharing of Badges and filled the form (2 points)**  
-- [ ] **Completed Bonus Task 2 - Signing up for Sprint.dev and filled the form (3 points)**  
+- [✅] **All members of the team completed the mandatory task - Followed at least 2 of our social channels and filled the form**  
+- [✅] **Completed Bonus Task 1 - Sharing of Badges and filled the form (2 points)**  
+- [✅] **Completed Bonus Task 2 - Signing up for Sprint.dev and filled the form (3 points)**  
 
 ---
 
