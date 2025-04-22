@@ -30,7 +30,7 @@ It enables farmers and greenhouse managers to remotely monitor and control their
 `NA`
 
 ### Team Member:  
-- Aanand Pandit ([GitHub](https://github.com/aanandpandit) / Developer / Solo Performer)
+- Aanand Pandit ([GitHub](https://github.com/AanandPandit) / Developer / Solo Performer)
 
 ### My Approach:  
 - Chose this problem for its real-world impact in agriculture automation.
