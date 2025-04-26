@@ -90,7 +90,7 @@ It enables farmers and greenhouse managers to remotely monitor and control their
 - Python 3.7+
 - Fluvio CLI
 - PyQt5, Flask, pytz
-
+### Documentation Link: https://docs.google.com/document/d/13aQOE2tZ54SxaIsgggub240drTbfWEte/edit?usp=drive_link&ouid=118111382130845977162&rtpof=true&sd=true
 ### Local Setup:
 ```bash
 1. Clone the Repository:
