@@ -4,7 +4,6 @@
 
 > GreenHouse Agri-Farming Monitoring
 
-YouTube: https://youtu.be/ubT7Vlt_fJ4
 ---
 
 ## 📌 Problem Statement
@@ -72,8 +71,8 @@ It enables farmers and greenhouse managers to remotely monitor and control their
 
 ## 📽️ Demo & Deliverables
 
-- **Demo Video Link:** [Paste YouTube or Loom link here]  
-- **Pitch Deck / PPT Link:** [Paste Google Slides or PDF link here]  
+- **Demo Video Link:** https://youtu.be/ubT7Vlt_fJ4 
+- **Pitch Deck / PPT Link:** https://drive.google.com/drive/folders/1WeDNUUVo3XeDa5yZG4H4mjroDWGHoID_?usp=drive_link
 
 ---
 
